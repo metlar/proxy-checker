@@ -5,6 +5,30 @@ A PHP class to check proxy.
 There are a ton of different methods of check proxy using PHP.
 
 I created this class for quick and multi threads proxy servers checking.
+## Installation (via composer)
+
+[Get composer](http://getcomposer.org/doc/00-intro.md) and add this in your requires section of the composer.json:
+
+```
+{
+    "require": {
+        "metlar/proxy-checker": "*"
+    }
+}
+```
+
+and then
+
+```
+composer install
+```
+or
+
+Simply require the package by its name with composer:
+```bash
+$ composer require metlar/proxy-checker
+```
+
 
 ## Usage
 
