@@ -40,7 +40,6 @@
 /.gitattributes
 /.htaccess
 /autoload.php
-/composer.json
 /composer.lock
 /example.gitignore
 /proxy-checker/example/index.php
