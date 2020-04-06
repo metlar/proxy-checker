@@ -29,6 +29,10 @@ Simply require the package by its name with composer:
 $ composer require metlar/proxy-checker
 ```
 
+Run scan proxy in composer:
+```bash
+$ composer run:proxy
+```
 
 ## Usage
 
@@ -40,55 +44,68 @@ Pretty simple.
 use Metlar\Proxy\ProxyChecker;
  
 $proxy = new ProxyChecker();
-$proxy->saveFile('txt');
+$proxy->save('txt');
 $proxy->execute();
 ```
 
-- and see result active proxy in file `logs/result.txt` or in `logs/result.json` if set `$proxy->saveFile('json')`
+- and see result active proxy in file `logs/result.txt` or in `logs/result.json` if set `$proxy->save('json')`
 
 You can change the class settings using the additional methods:
 ```php
-$proxy->thread(5);
-$proxy->saveFile('json');
-$proxy->logging(true);
+$proxy->save('txt');
+$proxy->log(true);
+$proxy->thread(15);
 $proxy->shuffle(true);
-$proxy->loadProxyList(null);
-$proxy->checkUrl('http://httpbin.org/get');
-$proxy->setGetArrayResult(true);
+$proxy->load('proxylist');
+//$proxy->load(['127.0.0.1:80', '127.0.0.1:8080']);
+$proxy->url('http://httpbin.org/get');
+$proxy->execute();
+$proxy->getArrayResult();
 ```
 
+- sets quantity threads for curl, default settings: `15`
 ```php 
 $proxy->thread(5);
 ``` 
-- sets quantity threads for curl, default settings: `15`
+
+- sets format save data , default settings: `txt`, can save to `json`
 ```php 
-$proxy->saveFile('json');
+$proxy->save('json');
 ``` 
-- sets format save data
+
+- sets logging to file `logs/result-scan.log`, default settings: `false`
 ```php 
-$proxy->logging(true);
+$proxy->log(true);
 ``` 
-- sets logging to file `logs/result-scan.log`
+
+- sets scan shuffle  list proxys, default settings: `false`
 ```php 
 $proxy->shuffle(true);
 ``` 
-- sets scan shuffle  list proxys, default settings: `false`
+
+- sets name file proxy list, default settings: `proxylist`, can take array `$proxy->load(['127.0.0.1:80', '127.0.0.1:8080']);`
 ```php 
-$proxy->loadProxyList(null);
+$proxy->load('proxylist');
 ``` 
-- sets name file proxy list, default settings: `proxylist`
+
+- sets checked url, default settings: `http://httpbin.org/get` 
 ```php 
-$proxy->checkUrl('http://httpbin.org/get');
+$proxy->url('http://httpbin.org/get');
 ``` 
-- sets checked url, default settings: `http://httpbin.org/get`  
+
+- run scan proxy 
 ```php 
-$proxy->setGetArrayResult(true);
+$proxy->execute();
+```
+
+- get array result scaned list proxy, after `$proxy->execute()`
+```php 
+$proxy->getArrayResult();
 ``` 
-- sets settings to `true` to return array result scaned list proxy, default settings: `false`
 
 
 
 
 ## License
 
-Imap is licensed under the MIT license. See included LICENSE.md.
+MIT license. See included LICENSE.md.
