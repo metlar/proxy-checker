@@ -8,9 +8,9 @@
 	interface TypeInterface
 	{
 		/**
-		 * Реавлизация метода типа данных
+		 * Get type data
 		 *
-		 * @return string
+		 * @return string|false
 		 */
-		public function getData();
+		public function getDataType();
 	}

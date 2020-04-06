@@ -5,42 +5,31 @@
 	 */
 	namespace Metlar\Proxy\lib\Save;
 	
+	use Metlar\Proxy\ProxyCheckerParams;
 	
 	class Save extends SaveAbstract
 	{
-		private $data;
-		private $type;
-		private $file_name = 'result';
-		private $file_path = __DIR__.'/../../../logs/';
-		
-		protected $type_class;
+		/**
+		 * @var ProxyCheckerParams
+		 */
+		public $params;
 		
 		/**
-		 * Set type
+		 * Save constructor.
 		 *
-		 * @param $type
-		 *
-		 * @return $this
+		 * @param ProxyCheckerParams $params
 		 */
-		public function setType($type)
+		public function __construct(ProxyCheckerParams $params)
 		{
-			$this->type = $type;
-			
-			return $this;
+			$this->params = $params;
 		}
 		
 		/**
-		 * Set data
-		 *
-		 * @param $data
-		 *
-		 * @return $this
+		 * @return ProxyCheckerParams
 		 */
-		public function setData($data)
+		public function getParams()
 		{
-			$this->data = $data;
-			
-			return $this;
+			return $this->params;
 		}
 		
 		/**
@@ -50,47 +39,12 @@
 		 */
 		public function create(): TypeInterface
 		{
-			$nameClass = __NAMESPACE__.'\\'.ucfirst($this->type);
-			if (!class_exists($nameClass)) {
+			$nameClass = __NAMESPACE__.'\\'.ucfirst($this->params->getSave());
+			if (!class_exists($nameClass))
 				throw new \InvalidArgumentException("Type not found");
-			}
 			
-			$this->type_class = new $nameClass($this->data, $this->type);
+			return new $nameClass($this->params->getResultArray(), $this->params->getSave());
 			
-			return $this->type_class;
-		}
-		
-		/**
-		 * Get TypeClass
-		 *
-		 * @return mixed
-		 */
-		public function getTypeClass()
-		{
-			return $this->type_class;
-		}
-		
-		/**
-		 * Saving data to file.
-		 *
-		 * @return $this
-		 */
-		public function saveToFile()
-		{
-			$result = $this->create()->getData();
-			file_put_contents($this->getFullNameFile(), $result);
-			
-			return $this;
-		}
-		
-		/**
-		 * Creating full path and name file.
-		 *
-		 * @return string
-		 */
-		public function getFullNameFile()
-		{
-			return $this->file_path.$this->file_name.'.'.$this->type;
 		}
 		
 	}

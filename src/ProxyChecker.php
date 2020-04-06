@@ -3,171 +3,116 @@
 	 * @author   Metlar <metlarr@yandex.ru>
 	 * @datetime 2020
 	 */
+	
 	namespace Metlar\Proxy;
 	
-	use Metlar\Proxy\lib\Load;
-	use Metlar\Proxy\lib\ProxyCurl;
-	use Metlar\Proxy\lib\Save\Save;
-	
 	class ProxyChecker
+		//implements ProxyCheckerInterface
 	{
-		private $check_url = 'http://httpbin.org/get';
-		private $logging = false;
-		private $array_proxy;
-		private $thread = 15;
-		private $shuffle = false;
-		private $proxy_array_result = array();
-		private $type = false;
-		private $get_array_result = false;
-		
+		/**
+		 * @var ProxyCheckerParams
+		 */
+		protected $params;
 		
 		/**
-		 * @param bool $get_array_result
-		 *
-		 * @return $this
+		 * ProxyCheckeBuilder constructor.
 		 */
-		public function setGetArrayResult($get_array_result)
+		public function __construct()
 		{
-			$this->get_array_result = $get_array_result;
-			
-			return $this;
+			$this->params = new ProxyCheckerParams();
 		}
 		
 		/**
-		 * Set type save file
-		 *
-		 * @param string $type
-		 *
-		 * @return $this
+		 * @return ProxyCheckerParams
 		 */
-		public function saveFile($type)
+		public function getParams()
 		{
-			$this->type = $type;
-			
-			return $this;
+			return $this->params;
 		}
 		
 		/**
-		 * Shuffle array proxy
-		 *
-		 * @param int $shuffle
-		 *
-		 * @return $this
-		 */
-		public function shuffle($shuffle)
-		{
-			$this->shuffle = $shuffle;
-			
-			return $this;
-		}
-		
-		/**
-		 * Set num threads
-		 *
 		 * @param int $thread
 		 *
-		 * @return $this
+		 * @return ProxyChecker
 		 */
-		public function thread($thread)
+		public function thread(int $thread) : ProxyChecker
 		{
-			$this->thread = $thread;
-			
+			$this->params->setThread($thread);
 			return $this;
 		}
 		
 		/**
-		 * Run scan proxy
+		 * @param string $extension
 		 *
-		 * @return mixed
+		 * @return ProxyChecker
 		 */
-		public function execute()
+		public function save(string $extension) : ProxyChecker
 		{
-			$this->loadProxyList();
-			$this->scan();
-			if ($this->get_array_result) {
-				return $this->proxy_array_result;
-			}
-		}
-		
-		/**
-		 * Enable logging
-		 *
-		 * @param $logging bool
-		 *
-		 * @return $this
-		 */
-		public function logging($logging)
-		{
-			$this->logging = $logging;
-			
+			$this->params->setSave($extension);
 			return $this;
 		}
 		
 		/**
-		 * Load proxy list
-		 */
-		public function loadProxyList($file_name = null)
-		{
-			$file = new Load($file_name);
-			$this->array_proxy = $file->getData();
-			if ($this->shuffle) {
-				shuffle($this->array_proxy);
-			}
-			
-			return $this;
-		}
-		
-		
-		/**
-		 * Set check url
+		 * @param bool $shuffle
 		 *
-		 * @param string $check_url
-		 *
-		 * @return $this
+		 * @return ProxyChecker
 		 */
-		public function checkUrl(string $check_url)
+		public function shuffle(bool $shuffle) : ProxyChecker
 		{
-			$this->check_url = $check_url;
-			
+			$this->params->setShuffle($shuffle);
 			return $this;
 		}
 		
 		/**
-		 * Scan proxy list
+		 * @param bool $log
+		 *
+		 * @return ProxyChecker
 		 */
-		protected function scan()
+		public function log(bool $log) : ProxyChecker
 		{
-			
-			$proxy_curl = new ProxyCurl();
-			
-			$this->array_proxy = array_chunk($this->array_proxy, $this->thread);
-			
-			foreach ($this->array_proxy as $arrayproxy) {
-				$query_result = $proxy_curl->setLogging($this->logging)
-					->getMultiResult(
-						$this->check_url,
-						$arrayproxy
-					);
-				$this->proxy_array_result = array_merge($this->proxy_array_result, $query_result);
-			}
-			
-			if ($this->type) {
-				$this->saveToFile();
-			}
+			$this->params->setLog($log);
+			return $this;
 		}
 		
 		/**
-		 * Save to file
+		 * @param mixed $load
+		 *
+		 * @return ProxyChecker
 		 */
-		protected function saveToFile()
+		public function load($load) : ProxyChecker
 		{
-			$save = new Save();
-			$save->setType($this->type)
-				->setData($this->proxy_array_result)
-				->saveToFile();
-			
+			$this->params->setLoad($load);
+			return $this;
 		}
 		
+		/**
+		 * @param string $url
+		 *
+		 * @return ProxyChecker
+		 */
+		public function url(string $url) : ProxyChecker
+		{
+			$this->params->setUrl($url);
+			return $this;
+		}
+		
+		/**
+		 * Start operation
+		 */
+		public function execute(): void
+		{
+			$result = new ProxyCheckerOperations($this->params);
+			
+			$result->operation();
+		}
+		
+		/**
+		 * Get array result
+		 * @return array
+		 */
+		public function getArrayResult() : array
+		{
+			return $this->params->getResultArray();
+		}
 		
 	}
-

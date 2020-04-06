@@ -8,14 +8,25 @@
 	
 	class Json implements TypeInterface
 	{
+		/**
+		 * @var array
+		 */
 		private $data;
 		
+		/**
+		 * Json constructor.
+		 *
+		 * @param array $data
+		 */
 		public function __construct($data)
 		{
 			$this->data = $data;
 		}
 		
-		public function getData()
+		/**
+		 * @return string|false
+		 */
+		public function getDataType()
 		{
 			return json_encode($this->data);
 		}

@@ -5,85 +5,63 @@
 	 */
 	namespace Metlar\Proxy\lib;
 	
-	use Monolog\Handler\StreamHandler;
-	use Monolog\Logger;
+	use Metlar\Proxy\ProxyCheckerParams;
 	
 	class ProxyCurl
 	{
+		/**
+		 * @var array
+		 */
 		private $channels = array();
-		private $log;
-		private $logging = false;
+		
+		/**
+		 * @var array
+		 */
 		private $result = array();
 		
+		/**
+		 * @var ProxyCheckerParams
+		 */
+		private $params;
 		
 		/**
-		 * @param mixed $save_log
+		 * ProxyCurl constructor.
+		 *
+		 * @param ProxyCheckerParams $params
 		 */
-		public function saveLog($save_log)
+		public function __construct(ProxyCheckerParams $params)
 		{
-			if ($this->isLogging()) {
-				$this->log->info($save_log);
-			}
+			$this->params = $params;
 		}
 		
 		/**
-		 * @return bool
+		 * Start threads
 		 */
-		public function isLogging()
+		public function execute(): void
 		{
-			if ($this->logging) {
-				$this->log = new Logger('proxy-log');
-				$this->log->pushHandler(
-					new StreamHandler(__DIR__.'/../../logs/result-scan.log', Logger::INFO)
+			foreach ($this->params->getListProxy() as $arrayproxy) {
+				$query_result = $this->getMultiResult(
+					$this->params->getUrl(),
+					$arrayproxy
 				);
-
+				$this->result = array_merge($this->result, $query_result);
 			}
-			
-			return $this->logging;
+			$this->params->setResultArray($this->result);
 		}
 		
 		/**
-		 * @param $logging
+		 * Sending querys curl
 		 *
-		 * @return $this
-		 */
-		public function setLogging($logging)
-		{
-			$this->logging = $logging;
-			
-			return $this;
-		}
-		
-		
-		/**
-		 * @return mixed
-		 */
-		public function getLog()
-		{
-			return $this->log;
-		}
-		
-		/**
-		 * @param $log
-		 *
-		 * @return $this
-		 */
-		public function setLog($log)
-		{
-			$this->log = $log;
-			
-			return $this;
-		}
-		
-		/**
-		 * @param $link
-		 * @param $arrayproxy
+		 * @param string $link
+		 * @param array  $arrayproxy
 		 *
 		 * @return array
 		 */
 		public function getMultiResult($link, $arrayproxy)
 		{
-			
+			/**
+			 * @var resource
+			 */
 			$multi = curl_multi_init();
 			
 			foreach ($arrayproxy as $proxy) {
@@ -120,9 +98,9 @@
 				$status = $info['http_code'];
 				
 				if ($status == 200) {
-					$this->arrayMapping($proxy, $status = 1);
+					$this->result = $this->arrayMapping($proxy, $status = 1);
 				} elseif ($info) {
-					$this->arrayMapping($proxy, $status = 0);
+					$this->result = $this->arrayMapping($proxy, $status = 0);
 				}
 				
 				curl_multi_remove_handle($multi, $channel);
@@ -133,15 +111,22 @@
 			return $this->result;
 		}
 		
+		/**
+		 * Mapping data for result
+		 *
+		 * @param string $proxy
+		 * @param int    $status
+		 * @return array
+		 */
 		public function arrayMapping($proxy, $status)
 		{
 			$status_proxy = array(
 				0 => 'disabled',
 				1 => 'enabled',
 			);
+			$this->logging("$status_proxy[$status]\t{$proxy}\n");
 			
-			$this->saveLog("$status_proxy[$status]\t{$proxy}\n");
-			
+			//colorizing data in console
 			echo ColorConsole::color(
 				$status_proxy[$status],
 				"$status_proxy[$status] \t{$proxy}\n"
@@ -152,6 +137,20 @@
 				'date' => date("Y-m-d H:i:s"),
 			];
 			$this->result[$status_proxy[$status]]['short'][] = $proxy;
+			
+			return $this->result;
+		}
+		
+		/**
+		 * Save data to log
+		 *
+		 * @param string $msg
+		 */
+		public function logging($msg): void
+		{
+			if ($this->params->isLog()) {
+				$this->params->getLogger()->info($msg);
+			}
 		}
 		
 	}

@@ -5,66 +5,64 @@
 	 */
 	namespace Metlar\Proxy\lib;
 	
+	use Metlar\Proxy\ProxyCheckerParams;
 	
 	class Load
 	{
-		private $file_name = 'proxylist';
-		private $fileData;
+		/**
+		 * @var ProxyCheckerParams
+		 */
+		private $params;
 		
-		public function __construct($file_name)
+		/**
+		 * Load constructor.
+		 *
+		 * @param ProxyCheckerParams $params
+		 */
+		public function __construct(ProxyCheckerParams $params)
 		{
-			if ($file_name) {
-				$this->file_name = $file_name;
-			}
+			$this->params = $params;
 		}
 		
 		/**
 		 * Load files
-		 *
-		 * @return $this
+		 * @return string
 		 */
 		public function loadFile()
 		{
-			$file = __DIR__.'/../../source/'.$this->file_name;
-			$this->fileData = file_get_contents($file);
+			$file = $this->params->getLoadPathFile().$this->params->getLoad();
+			if (file_exists($file)) {
+				return  (string)file_get_contents($file);
+			}
 			
-			return $this;
+			return '';
 		}
 		
 		/**
 		 * Explode data and trim
-		 */
-		public function addToArray()
-		{
-			$array_proxy = explode("\n", $this->fileData);
-			$this->fileData = array_map('trim', $array_proxy);
-		}
-		
-		/**
-		 * @param $fileName
+		 * @param string $data
 		 *
-		 * @return $this
+		 * @return array
 		 */
-		public function setFileName($file_name)
+		public function addToArray($data)
 		{
-			$this->file_name = $file_name;
-			
-			return $this;
+			$array_proxy = explode("\n", $data);
+			return array_map('trim', $array_proxy);
 		}
 		
 		/**
-		 * @return array
+		 * @return array list proxy
 		 */
 		public function getData()
 		{
-			if ($this->file_name) {
-				$this->loadFile()->addToArray();
-				
-				return $this->fileData;
-			}
+			$result = array();
+			if (is_array($this->params->getLoad()))
+				$result = $this->params->getLoad();
 			
-			return [];
+			if (is_string($this->params->getLoad())) {
+				$result = $this->addToArray($this->loadFile());
+			}
+			return $result;
 		}
-		
 		
 	}
