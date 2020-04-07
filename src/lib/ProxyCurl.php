@@ -134,7 +134,7 @@
 			
 			$this->result[$status_proxy[$status]]['full'][] = [
 				'url' => $proxy,
-				'date' => date("Y-m-d H:i:s"),
+				'date' => date("Y-m-d H:i:sP"),
 			];
 			$this->result[$status_proxy[$status]]['short'][] = $proxy;
 			

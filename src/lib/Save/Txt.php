@@ -28,7 +28,7 @@
 		public function getDataType()
 		{
 			$result = '';
-			$delimiter = "\t";
+			$delimiter = "\t\t";
 			if ($this->isEmptyArrayEnabled())
 				foreach ($this->data['enabled']['full'] as $item)
 					$result .= $item['url']. $delimiter .$item['date'].PHP_EOL;
