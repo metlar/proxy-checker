@@ -15,6 +15,7 @@
 		->load('proxylist')
 		//->load(['119.29.135.226:80', '36.66.232.157:8080', '95.211.216.20:36650', '95.211.216.20:36335'])
 		->url('http://httpbin.org/get')
+		->consoleShow(false)
 		->execute();
 	
 	//Get array result in console

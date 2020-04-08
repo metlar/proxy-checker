@@ -81,6 +81,11 @@
 		private $resultFileName = 'result';
 		
 		/**
+		 * @var bool Enable show result scan in console
+		 */
+		private $consoleShow = false;
+		
+		/**
 		 * @return string
 		 */
 		public function getUrl()
@@ -302,6 +307,22 @@
 		public function setLoadPathFile($loadPathFile) : void
 		{
 			$this->loadPathFile = $loadPathFile;
+		}
+		
+		/**
+		 * @return bool
+		 */
+		public function isConsoleShow(): bool
+		{
+			return $this->consoleShow;
+		}
+		
+		/**
+		 * @param bool $consoleShow
+		 */
+		public function setConsoleShow(bool $consoleShow): void
+		{
+			$this->consoleShow = $consoleShow;
 		}
 		
 		

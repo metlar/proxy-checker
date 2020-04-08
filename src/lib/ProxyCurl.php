@@ -127,7 +127,7 @@
 			$this->logging("$status_proxy[$status]\t{$proxy}\n");
 			
 			//colorizing data in console
-			echo ColorConsole::color(
+			if($this->params->isConsoleShow())echo ColorConsole::color(
 				$status_proxy[$status],
 				"$status_proxy[$status] \t{$proxy}\n"
 			);

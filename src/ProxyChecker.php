@@ -115,4 +115,16 @@
 			return $this->params->getResultArray();
 		}
 		
+		/**
+		 * Show result scan in console
+		 *
+		 * @param bool $show
+		 * @return ProxyChecker
+		 */
+		public function consoleShow($show)
+		{
+			$this->params->setConsoleShow($show);
+			return $this;
+		}
+		
 	}
