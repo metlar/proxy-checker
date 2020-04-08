@@ -59,6 +59,7 @@ $proxy->shuffle(true);
 $proxy->load('proxylist');
 //$proxy->load(['127.0.0.1:80', '127.0.0.1:8080']);
 $proxy->url('http://httpbin.org/get');
+$proxy->consoleShow(true);
 $proxy->execute();
 $proxy->getArrayResult();
 ```
@@ -92,6 +93,11 @@ $proxy->load('proxylist');
 ```php 
 $proxy->url('http://httpbin.org/get');
 ``` 
+
+- sets show results in console, default settings: `false`
+```php 
+$proxy->consoleShow(true);
+```
 
 - run scan proxy 
 ```php 
