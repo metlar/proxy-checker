@@ -38,6 +38,7 @@
 		 */
 		public function testArrayMapping($expected,$status)
 		{
+			$this->params->setConsoleShow(true); // eneble show in console
 			$this->expectOutputString(ColorConsole::START_STR.ColorConsole::$array_color[$expected]
 				."$expected \t"."127.0.0.1:8080"."\n".ColorConsole::END_STR);
 			$result = $this->class->arrayMapping('127.0.0.1:8080', $status);
@@ -54,8 +55,8 @@
 		public function statusProvider()
 		{
 			return [
-				'enabled' => ['enabled', 1],
-				'disabled' => ['disabled', 0],
+				'enabled' => ['enabled', 1 , 1],
+				'disabled' => ['disabled', 0 , 1],
 			];
 		}
 	}

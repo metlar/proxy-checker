@@ -227,4 +227,16 @@
 				$this->proxy_checker->getParams()->getSave()
 			);
 		}
+		
+		/**
+		 * @dataProvider booleanProvider
+		 */
+		public function testCheckBoolConsoleShow($first_bool, $last_bool)
+		{
+			$this->proxy_checker->consoleShow($first_bool);
+			$this->assertEquals(
+				$last_bool,
+				$this->proxy_checker->getParams()->isConsoleShow()
+			);
+		}
 	}
