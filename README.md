@@ -12,7 +12,7 @@ I created this class for quick and multi threads proxy servers checking.
 ```
 {
     "require": {
-        "metlar/proxy-checker": "*"
+        "metlar/proxy-checker": "dev-master"
     }
 }
 ```
@@ -37,31 +37,25 @@ $ composer run:proxy
 ## Usage
 
 Pretty simple. 
- - add proxy to file `source/proxylist`
+ - add proxy to file `source/proxylist.txt`
  - create an instance, and run `execute()`
 
 ```php
-use Metlar\Proxy\ProxyChecker;
- 
-$proxy = new ProxyChecker();
-$proxy->save('txt');
-$proxy->execute();
+$proxy = $container->get(ProxyChecker::class);
+$proxy
+    ->thread(5)
+    ->setProxy(["176.9.63.62:3128", "176.9.75.42:3128"])
+    //->saveFormat('json')
+    ->getArray();
 ```
 
 - and see result active proxy in file `logs/result.txt` or in `logs/result.json` if set `$proxy->save('json')`
 
 You can change the class settings using the additional methods:
 ```php
-$proxy->save('txt');
-$proxy->log(true);
 $proxy->thread(15);
-$proxy->shuffle(true);
-$proxy->load('proxylist');
-//$proxy->load(['127.0.0.1:80', '127.0.0.1:8080']);
-$proxy->url('http://httpbin.org/get');
-$proxy->consoleShow(true);
 $proxy->execute();
-$proxy->getArrayResult();
+$proxy->getArray();
 ```
 
 - sets quantity threads for curl, default settings: `15`
@@ -69,48 +63,30 @@ $proxy->getArrayResult();
 $proxy->thread(5);
 ``` 
 
-- sets format save data , default settings: `txt`, can save to `json`
+- sets format save data , default settings: `txt`, can save to `json`, `csv`
 ```php 
-$proxy->save('json');
+$proxy->saveFormat('json');
 ``` 
-
-- sets logging to file `logs/result-scan.log`, default settings: `false`
-```php 
-$proxy->log(true);
-``` 
-
-- sets scan shuffle  list proxys, default settings: `false`
-```php 
-$proxy->shuffle(true);
-``` 
-
-- sets name file proxy list, default settings: `proxylist`, can take array `$proxy->load(['127.0.0.1:80', '127.0.0.1:8080']);`
-```php 
-$proxy->load('proxylist');
-``` 
-
-- sets checked url, default settings: `http://httpbin.org/get` 
-```php 
-$proxy->url('http://httpbin.org/get');
-``` 
-
-- sets show results in console, default settings: `false`
-```php 
-$proxy->consoleShow(true);
-```
 
 - run scan proxy 
 ```php 
 $proxy->execute();
 ```
 
-- get array result scaned list proxy, after `$proxy->execute()`
+- get array result scaned list proxy
 ```php 
-$proxy->getArrayResult();
+$proxy->getArray();
 ``` 
 
-
-
+- file settings `config/settings/default.yml`
+```php 
+path_proxy_list: '/../../../source/' 
+filename_proxy_list: 'proxylist.txt'
+path_results: '/../../../logs/'
+filename_results: 'result'
+checkpoint_url: 'http://httpbin.org/get'
+show_result_in_console: true
+``` 
 
 ## License
 

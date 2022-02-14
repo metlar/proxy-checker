@@ -1,130 +1,72 @@
 <?php
-	/**
-	 * @author   Metlar <metlarr@yandex.ru>
-	 * @datetime 2020
-	 */
-	
-	namespace Metlar\Proxy;
-	
-	class ProxyChecker
-		//implements ProxyCheckerInterface
-	{
-		/**
-		 * @var ProxyCheckerParams
-		 */
-		protected $params;
-		
-		/**
-		 * ProxyCheckeBuilder constructor.
-		 */
-		public function __construct()
-		{
-			$this->params = new ProxyCheckerParams();
-		}
-		
-		/**
-		 * @return ProxyCheckerParams
-		 */
-		public function getParams()
-		{
-			return $this->params;
-		}
-		
-		/**
-		 * @param int $thread
-		 *
-		 * @return ProxyChecker
-		 */
-		public function thread(int $thread) : ProxyChecker
-		{
-			$this->params->setThread($thread);
-			return $this;
-		}
-		
-		/**
-		 * @param string $extension
-		 *
-		 * @return ProxyChecker
-		 */
-		public function save(string $extension) : ProxyChecker
-		{
-			$this->params->setSave($extension);
-			return $this;
-		}
-		
-		/**
-		 * @param bool $shuffle
-		 *
-		 * @return ProxyChecker
-		 */
-		public function shuffle(bool $shuffle) : ProxyChecker
-		{
-			$this->params->setShuffle($shuffle);
-			return $this;
-		}
-		
-		/**
-		 * @param bool $log
-		 *
-		 * @return ProxyChecker
-		 */
-		public function log(bool $log) : ProxyChecker
-		{
-			$this->params->setLog($log);
-			return $this;
-		}
-		
-		/**
-		 * @param mixed $load
-		 *
-		 * @return ProxyChecker
-		 */
-		public function load($load) : ProxyChecker
-		{
-			$this->params->setLoad($load);
-			return $this;
-		}
-		
-		/**
-		 * @param string $url
-		 *
-		 * @return ProxyChecker
-		 */
-		public function url(string $url) : ProxyChecker
-		{
-			$this->params->setUrl($url);
-			return $this;
-		}
-		
-		/**
-		 * Start operation
-		 */
-		public function execute(): void
-		{
-			$result = new ProxyCheckerOperations($this->params);
-			
-			$result->operation();
-		}
-		
-		/**
-		 * Get array result
-		 * @return array
-		 */
-		public function getArrayResult() : array
-		{
-			return $this->params->getResultArray();
-		}
-		
-		/**
-		 * Show result scan in console
-		 *
-		 * @param bool $show
-		 * @return ProxyChecker
-		 */
-		public function consoleShow($show)
-		{
-			$this->params->setConsoleShow($show);
-			return $this;
-		}
-		
-	}
+
+namespace Metlar\Proxy;
+
+class ProxyChecker
+{
+    /**
+     * @var integer
+     */
+    private $thread = 5;
+    /**
+     * @var array
+     */
+    private $proxy;
+
+    /**
+     * @var ProxyCheckerOperations
+     */
+    private $checkerOperations;
+
+    /**
+     * ProxyChecker constructor.
+     * @param ProxyCheckerOperations $checkerOperations
+     */
+    public function __construct(ProxyCheckerOperations $checkerOperations)
+    {
+        $this->checkerOperations = $checkerOperations;
+    }
+
+    public function setProxy(array $proxy): ProxyChecker
+    {
+        $this->proxy = $proxy;
+
+        return $this;
+    }
+
+    /**
+     * @param int $thread
+     * @return $this
+     */
+    public function thread(int $thread): ProxyChecker
+    {
+        $this->thread = $thread;
+
+        return $this;
+    }
+
+    /**
+     * @param string $format
+     * @return ProxyChecker
+     */
+    public function saveFormat(string $format): ProxyChecker
+    {
+        $this->checkerOperations->setFormat($format);
+        $this->checkerOperations->setThread($this->thread);
+        $this->checkerOperations->setProxy($this->proxy);
+        $this->checkerOperations->operation();
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getArray(): array
+    {
+        $this->checkerOperations->setThread($this->thread);
+        $this->checkerOperations->setProxy($this->proxy);
+
+        return $this->checkerOperations->getResultArray();
+    }
+}
