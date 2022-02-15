@@ -41,51 +41,54 @@ Pretty simple.
  - create an instance, and run `execute()`
 
 ```php
-$proxy = $container->get(ProxyChecker::class);
-$proxy
-    ->thread(5)
-    ->setProxy(["176.9.63.62:3128", "176.9.75.42:3128"])
-    //->saveFormat('json')
-    ->getArray();
+<?php
+ require_once __DIR__ . '/../vendor/autoload.php';
+ 
+ use \Metlar\Proxy\ProxyChecker;
+ 
+ $container = require __DIR__ . '/../config/bootstrap/container.php';
+ 
+ $proxy = $container->get(ProxyChecker::class);
+ $proxy
+     //->setProxy(["176.9.63.62:3128", "176.9.75.42:3128","47.243.228.222:59394","20.105.253.176:8080","117.127.16.205:8080"])
+     ->saveToFormat('json')
+     ->getResultArray();
 ```
 
 - and see result active proxy in file `logs/result.txt` or in `logs/result.json` if set `$proxy->save('json')`
 
 You can change the class settings using the additional methods:
 ```php
-$proxy->thread(15);
-$proxy->execute();
-$proxy->getArray();
+     ->setProxy(["176.9.63.62:3128", "176.9.75.42:3128","47.243.228.222:59394","20.105.253.176:8080","117.127.16.205:8080"])
+     ->saveToFormat('json')
+     ->getResultArray();
 ```
 
-- sets quantity threads for curl, default settings: `15`
-```php 
-$proxy->thread(5);
-``` 
 
 - sets format save data , default settings: `txt`, can save to `json`, `csv`
 ```php 
-$proxy->saveFormat('json');
+$proxy->saveToFormat('json');
 ``` 
-
-- run scan proxy 
-```php 
-$proxy->execute();
-```
 
 - get array result scaned list proxy
 ```php 
-$proxy->getArray();
+$proxy->getResultArray();
 ``` 
 
 - file settings `config/settings/default.yml`
-```php 
-path_proxy_list: '/../../../source/' 
-filename_proxy_list: 'proxylist.txt'
-path_results: '/../../../logs/'
-filename_results: 'result'
-checkpoint_url: 'http://httpbin.org/get'
-show_result_in_console: true
+```yaml 
+proxy_checker:
+  curl:
+    checkpoint_url: 'http://httpbin.org/get'
+    thread: 5
+  console:
+    show: true
+  log_results:
+    filename: 'result'
+    path: '/../../../logs/'
+  proxy-list:
+    path: '/../../../source/'
+    filename: 'proxylist.txt'
 ``` 
 
 ## License
