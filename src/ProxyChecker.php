@@ -38,6 +38,13 @@ class ProxyChecker
         $this->sendRequests = $sendRequests;
     }
 
+    /**
+     * @param array $arrayCheckedProxy
+     */
+    public function setArrayCheckedProxy(array $arrayCheckedProxy): void
+    {
+        $this->arrayCheckedProxy = $arrayCheckedProxy;
+    }
 
     public function setProxy(array $proxy): ProxyChecker
     {
@@ -80,9 +87,9 @@ class ProxyChecker
     public function getResultArray(): array
     {
         if(empty($this->arrayCheckedProxy)){
-            $this->arrayCheckedProxy = $this->sendRequests
+            $this->setArrayCheckedProxy($this->sendRequests
                 ->setUrls($this->createListProxy())
-                ->execute();
+                ->execute());
         }
 
         return $this->arrayCheckedProxy;
