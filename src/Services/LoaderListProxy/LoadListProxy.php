@@ -38,7 +38,7 @@ class LoadListProxy
     public function getFullPathFile(): string
     {
         try {
-            $fullPathFile = __DIR__ . $this->config['proxy-list']['path_proxy_list'] . $this->config['proxy-list']['filename_proxy_list'];
+            $fullPathFile = __DIR__ . $this->config['proxy-list']['path'] . $this->config['proxy-list']['filename'];
 
         } catch (Throwable $e) {
             $this->logger->error('Not found settings proxy lists.', ['error' => $e]);

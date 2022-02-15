@@ -156,7 +156,7 @@ class SendRequests
      */
     public function writeDataConsole(array $proxyData): void
     {
-        if($this->config['console']['show_result_in_console']){
+        if($this->config['console']['show']){
             $this->consoleWriter->write($proxyData);
         }
     }

@@ -42,8 +42,8 @@ abstract class FileCreatorAbstract
     public function getFullNameFile(): string
     {
         return __DIR__ .
-            $this->container->get('proxy_checker')['log_results']['path_results'] .
-            $this->container->get('proxy_checker')['log_results']['filename_results'] . '.' .
+            $this->container->get('proxy_checker')['log_results']['path'] .
+            $this->container->get('proxy_checker')['log_results']['filename'] . '.' .
             $this->typeFile;
     }
 }
