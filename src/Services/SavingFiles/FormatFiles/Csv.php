@@ -6,17 +6,13 @@ use Metlar\Proxy\Services\SavingFiles\FileTypeInterface;
 
 class Csv implements FileTypeInterface
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $data;
-
 
     public function setData(array $data): void
     {
         $this->data = $data;
     }
-
 
     /**
      * @return string
@@ -26,12 +22,9 @@ class Csv implements FileTypeInterface
         $result = '';
 
         foreach ($this->data as $proxy) {
-
             $result .= implode(",", array_values($proxy)) . PHP_EOL;
         }
 
         return $result ?? '';
     }
-
-
 }

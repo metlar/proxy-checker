@@ -6,32 +6,23 @@ use Metlar\Proxy\Services\SavingFiles\FileTypeInterface;
 
 class Txt implements FileTypeInterface
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $data;
-
 
     public function setData(array $data): void
     {
         $this->data = $data;
     }
 
-
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getDataType(): string
     {
         $result = '';
 
         foreach ($this->data as $proxy) {
-
             $result .= implode("\t", array_values($proxy)) . PHP_EOL;
         }
 
         return $result ?? '';
     }
-
-
 }

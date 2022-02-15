@@ -1,6 +1,12 @@
-path_proxy_list: '/../../../source/'
-filename_proxy_list: 'proxylist.txt'
-path_results: '/../../../logs/'
-filename_results: 'result'
-checkpoint_url: 'http://httpbin.org/get'
-show_result_in_console: true
+proxy_checker:
+  curl:
+    checkpoint_url: 'http://httpbin.org/get'
+    thread: 5
+  console:
+    show_result_in_console: true
+  log_results:
+    filename_results: 'result'
+    path_results: '/../../../logs/'
+  proxy-list:
+    path_proxy_list: '/../../../source/'
+    filename_proxy_list: 'proxylist.txt'

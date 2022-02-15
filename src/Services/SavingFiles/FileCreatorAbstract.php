@@ -8,19 +8,13 @@ use DI\NotFoundException;
 
 abstract class FileCreatorAbstract
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $typeFile;
 
-    /**
-     * @var Container
-     */
+    /** @var Container */
     protected $container;
 
-    /**
-     * @return FileTypeInterface
-     */
+    /** @return FileTypeInterface */
     abstract public function create(): FileTypeInterface;
 
     /**
@@ -47,8 +41,9 @@ abstract class FileCreatorAbstract
      */
     public function getFullNameFile(): string
     {
-        return __DIR__ . $this->container->get('path_results') . $this->container->get('filename_results') . '.'
-            . $this->typeFile;
-
+        return __DIR__ .
+            $this->container->get('proxy_checker')['log_results']['path_results'] .
+            $this->container->get('proxy_checker')['log_results']['filename_results'] . '.' .
+            $this->typeFile;
     }
 }

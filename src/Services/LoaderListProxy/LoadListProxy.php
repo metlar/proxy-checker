@@ -10,15 +10,14 @@ use Throwable;
 
 class LoadListProxy
 {
-    /**
-     * @var Container
-     */
+    /** @var Container */
     private $container;
-    /**
-     * @var LoggerInterface
-     */
+
+    /** @var LoggerInterface */
     private $logger;
 
+    /** @var array */
+    private $config;
 
     /**
      * LoadListProxy constructor.
@@ -29,6 +28,7 @@ class LoadListProxy
     {
         $this->logger = $logger;
         $this->container = $container;
+        $this->config = $container->get('proxy_checker');
     }
 
     /**
@@ -38,7 +38,7 @@ class LoadListProxy
     public function getFullPathFile(): string
     {
         try {
-            $fullPathFile = __DIR__ . $this->container->get('path_proxy_list') . $this->container->get('filename_proxy_list');
+            $fullPathFile = __DIR__ . $this->config['proxy-list']['path_proxy_list'] . $this->config['proxy-list']['filename_proxy_list'];
 
         } catch (Throwable $e) {
             $this->logger->error('Not found settings proxy lists.', ['error' => $e]);
@@ -54,7 +54,6 @@ class LoadListProxy
      * @return string
      * @throws NotFoundException
      */
-
     public function loadFile(): string
     {
         if (false === ($listProxy = file_get_contents($this->getFullPathFile()))) {

@@ -4,15 +4,13 @@ namespace Proxy\Unit;
 
 use Metlar\Proxy\ProxyChecker;
 use Metlar\Proxy\ProxyCheckerOperations;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ProxyCheckerTest extends TestCase
 {
     /** @var ProxyChecker */
     private $proxyChecker;
-    /** @var MockObject|ProxyCheckerOperations */
-    private $checkerOperations;
+
 
     protected function setUp(): void
     {

@@ -11,37 +11,26 @@ use Psr\Log\LogLevel;
 
 class SendRequests
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $channels = array();
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $result = array();
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     public $logger;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $urls;
-    /**
-     * @var Container
-     */
-    private $container;
-    /**
-     * @var false|mixed
-     */
+
+    /** @var false|mixed */
     private $multi;
-    /**
-     * @var ConsoleWriter
-     */
+
+    /** @var ConsoleWriter */
     private $consoleWriter;
+
+    /** @var array */
+    private $config;
 
     public const STATUS_PROXY = [
         0 => 'disabled',
@@ -53,17 +42,21 @@ class SendRequests
      * @param Container $container
      * @param LoggerInterface $logger
      * @param ConsoleWriter $consoleWriter
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     public function __construct(Container $container, LoggerInterface $logger, ConsoleWriter $consoleWriter)
     {
-        $this->container = $container;
         $this->logger = $logger;
         $this->consoleWriter = $consoleWriter;
+        $this->config = $container->get('proxy_checker');
     }
 
-    public function setUrls(array $urls): void
+    public function setUrls(array $urls): SendRequests
     {
-        $this->urls = $urls;
+        $this->urls = $this->makeChunk($urls);
+
+        return $this;
     }
 
     /**
@@ -71,11 +64,11 @@ class SendRequests
      */
     public function execute(): array
     {
-        $query_result[] = array();
+        $queryResult[] = array();
         foreach ($this->urls as $chunkArrayProxy) {
-            $query_result[] = $this->getMultiResult($chunkArrayProxy);
+            $queryResult[] = $this->getMultiResult($chunkArrayProxy);
         }
-        $this->result = array_merge($this->result, ...$query_result);
+        $this->result = array_merge($this->result, ...$queryResult);
         $this->processingResult();
 
         return $this->result;
@@ -85,10 +78,7 @@ class SendRequests
      * Sending querys curl
      *
      * @param array $arrayProxy
-     *
      * @return array
-     * @throws DependencyException
-     * @throws NotFoundException
      */
     public function getMultiResult(array $arrayProxy): array
     {
@@ -96,7 +86,7 @@ class SendRequests
 
         foreach ($arrayProxy as $proxy) {
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $this->container->get('checkpoint_url'));
+            curl_setopt($ch, CURLOPT_URL, $this->config['curl']['checkpoint_url']);
             curl_setopt($ch, CURLOPT_PROXY, $proxy);
             curl_setopt($ch, CURLOPT_HEADER, false);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -112,7 +102,6 @@ class SendRequests
 
         return $this->result;
     }
-
 
     public function multiProcessingCurl(): void
     {
@@ -136,7 +125,6 @@ class SendRequests
         foreach ($this->channels as $proxy => $channel) {
             $curlInfo = curl_getinfo($channel);
             $status = (200 === $curlInfo['http_code']) ? 1 : 0;
-            //$proxy = $curlInfo['primary_ip'].':'.$curlInfo['primary_port'];
             $proxyData = ['proxy' => $proxy, 'available' => $status, 'ping' => $curlInfo['connect_time'], 'speed' => $curlInfo['speed_download']];
             $this->result[$proxy] = $proxyData;
             curl_multi_remove_handle($this->multi, $channel);
@@ -148,13 +136,37 @@ class SendRequests
 
     private function processingResult(): void
     {
+        $this->writeTitleConsole();
         foreach ($this->result as $proxy)
         {
-            $this->consoleWriter->write($proxy);
+            $this->writeDataConsole($proxy);
             $this->logger->log(LogLevel::INFO, 'Log', $proxy);
         }
     }
 
+    public function writeTitleConsole(): void
+    {
+        if(!empty($this->result)){
+            $this->writeDataConsole(array_keys(current($this->result)));
+        }
+    }
 
+    /**
+     * @param array $proxyData
+     */
+    public function writeDataConsole(array $proxyData): void
+    {
+        if($this->config['console']['show_result_in_console']){
+            $this->consoleWriter->write($proxyData);
+        }
+    }
+
+    /**
+     * @param array $arrayList
+     * @return array
+     */
+    public function makeChunk(array $arrayList): array
+    {
+        return array_chunk($arrayList, $this->config['curl']['thread']);
+    }
 }
-

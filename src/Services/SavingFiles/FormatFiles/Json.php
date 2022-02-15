@@ -8,14 +8,10 @@ use Metlar\Proxy\Services\SavingFiles\FileTypeInterface;
 
 class Json implements FileTypeInterface
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $data;
 
-    /**
-     * @var LoggerInterface
-     */
+    /** @var LoggerInterface */
     private $logger;
 
     /**
@@ -27,15 +23,12 @@ class Json implements FileTypeInterface
         $this->logger = $logger;
     }
 
-
     public function setData(array $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getDataType(): string
     {
         try {
@@ -45,5 +38,4 @@ class Json implements FileTypeInterface
             return '';
         }
     }
-
 }

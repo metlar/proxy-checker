@@ -9,9 +9,7 @@ use InvalidArgumentException;
 
 class FileCreator extends FileCreatorAbstract
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $arrayData;
 
     /**
@@ -53,7 +51,6 @@ class FileCreator extends FileCreatorAbstract
      * @throws DependencyException
      * @throws NotFoundException
      */
-
     public function create(): FileTypeInterface
     {
         $nameClass = __NAMESPACE__ . '\\FormatFiles\\' . ucfirst($this->typeFile);
